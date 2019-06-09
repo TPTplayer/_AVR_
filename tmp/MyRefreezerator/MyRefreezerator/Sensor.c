@@ -1,10 +1,13 @@
 ﻿#include <avr/io.h>
+#include <avr/interrupt.h>
 #include <util/delay.h>
 #include <math.h>
 #include "sensor.h"
 
 void ADC_initializer(void){
 	volatile float dummy = 0;
+	
+	cli();
 	
 	ADCSRA = (1 << ADEN) | (1 << ADPS0) | (1 << ADPS1) | (1 << ADPS2);
 	_delay_ms(100);
@@ -15,6 +18,8 @@ void ADC_initializer(void){
 	while(ADCSRA & (1 << ADSC));
 	dummy = ADC;
 	_delay_ms(100);
+
+	sei();
 }
 
 /*Thremistor: 10KD-5K*/

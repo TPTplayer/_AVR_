@@ -1,10 +1,13 @@
 ﻿#include <avr/io.h>
+#include <avr/interrupt.h>
 #include <util/delay.h>
 #include "TWI.h"
 
 void TWI_initializer(void){
+	cli();
 	TWBR = 12;
 	TWSR = 0x00;
+	sei();
 }
 
 void TWI_transmit(uint8_t slave_addr, uint8_t data){

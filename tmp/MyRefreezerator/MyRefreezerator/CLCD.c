@@ -1,4 +1,5 @@
 ﻿#include <avr/io.h>
+#include <avr/interrupt.h>
 #include <util/delay.h>
 
 #include "CLCD.h"
@@ -34,6 +35,7 @@ void CLCD_Controller(char ctl){
 }
 
 void CLCD_initalizer(void){
+	cli();
 	_delay_ms(50);
 	CLCD_Controller(FUNC_DISPLAY_LINE_2 | FUNC_DATA_LINE_8);
 	_delay_us(40);
@@ -42,6 +44,7 @@ void CLCD_initalizer(void){
 	CLCD_Controller(CLEAR_DISPLAY);
 	_delay_ms(2);
 	CLCD_Controller(ENTRY_NO_SHIFT);
+	sei();
 }
 
 void CLCD_putstr(char addr, char *str){
