@@ -1,9 +1,9 @@
 ﻿#ifndef CLCD_H_
 #define CLCD_H_
 
-#define RS 0x04
+#define RS 0x01
 #define RW 0x02
-#define E 0x01
+#define E 0x04
 
 #define CLEAR_DISPLAY 0x01
 #define RETURN_HOME 0x02

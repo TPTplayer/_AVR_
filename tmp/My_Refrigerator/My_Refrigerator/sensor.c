@@ -8,7 +8,18 @@ void ADC_initializer(void){
 	volatile float dummy = 0;
 	
 	cli();
+	/*ADC0 Initialize*/
+	ADCSRA = (1 << ADEN) | (1 << ADPS0) | (1 << ADPS1) | (1 << ADPS2);
+	_delay_ms(100);
+	ADMUX = (0 << MUX0) | (1 << REFS0);
+	_delay_ms(10);
 	
+	ADCSRA |= (1 << ADSC);
+	while(ADCSRA & (1 << ADSC));
+	dummy = ADC;
+	_delay_ms(100);
+	
+	/*ADC1 Initialize*/
 	ADCSRA = (1 << ADEN) | (1 << ADPS0) | (1 << ADPS1) | (1 << ADPS2);
 	_delay_ms(100);
 	ADMUX = (1 << MUX0) | (1 << REFS0);
@@ -18,7 +29,29 @@ void ADC_initializer(void){
 	while(ADCSRA & (1 << ADSC));
 	dummy = ADC;
 	_delay_ms(100);
-
+	
+	/*ADC2 Initialize*/
+	ADCSRA = (1 << ADEN) | (1 << ADPS0) | (1 << ADPS1) | (1 << ADPS2);
+	_delay_ms(100);
+	ADMUX = (1 << MUX1) | (0 << MUX0) | (1 << REFS0);
+	_delay_ms(10);
+	
+	ADCSRA |= (1 << ADSC);
+	while(ADCSRA & (1 << ADSC));
+	dummy = ADC;
+	_delay_ms(100);
+	
+	/*ADC3 Initialize*/
+	ADCSRA = (1 << ADEN) | (1 << ADPS0) | (1 << ADPS1) | (1 << ADPS2);
+	_delay_ms(100);
+	ADMUX = (1 << MUX1) | (1 << MUX0) | (1 << REFS0);
+	_delay_ms(10);
+	
+	ADCSRA |= (1 << ADSC);
+	while(ADCSRA & (1 << ADSC));
+	dummy = ADC;
+	_delay_ms(100);
+	
 	sei();
 }
 
@@ -31,7 +64,7 @@ float getHeatsink1Temp(void){
 	float T0 = 298.15, R = 2000.0, R0 = 10000, B = 4200;
 	float Rt = 0, T = 0, Cel = 0;
 	
-	ADMUX &= 0x00; 
+	ADMUX = (1 << REFS0); 
 	_delay_us(100);
 	
 	ADCSRA = ADCSRA | (1 << ADSC); 
@@ -56,7 +89,7 @@ float getHeatsink2Temp(void){
 	float T0 = 298.15, R = 2000.0, R0 = 10000, B = 4200;
 	float Rt = 0, T = 0, Cel = 0;
 	
-	ADMUX = (MUX0 << 1);
+	ADMUX = (1 << MUX0) | (1 << REFS0);
 	_delay_us(100);
 	
 	ADCSRA = ADCSRA | (1 << ADSC);
@@ -81,7 +114,7 @@ float getHeatsink3Temp(void){
 	float T0 = 298.15, R = 2000.0, R0 = 10000, B = 4200;
 	float Rt = 0, T = 0, Cel = 0;
 	
-	ADMUX = (MUX1 << 1);
+	ADMUX = (1 << MUX1) | (1 << REFS0);
 	_delay_us(100);
 	
 	ADCSRA = ADCSRA | (1 << ADSC);
@@ -106,7 +139,7 @@ float getHeatsink4Temp(void){
 	float T0 = 298.15, R = 2000.0, R0 = 10000, B = 4200;
 	float Rt = 0, T = 0, Cel = 0;
 	
-	ADMUX = (MUX0 << 1) | (MUX1 << 1);
+	ADMUX = (1 << MUX0) | (1 << MUX1) | (1 << REFS0);
 	_delay_us(100);
 	
 	ADCSRA = ADCSRA | (1 << ADSC);
@@ -131,7 +164,7 @@ float getInsideTemp(void){
 	float T0 = 298.15, R = 2000.0, R0 = 10000, B = 4200;
 	float Rt = 0, T = 0, Cel = 0;
 	
-	ADMUX = (MUX2 << 1);
+	ADMUX = (1 << MUX2) | (1 << REFS0);
 	_delay_us(100);
 	
 	ADCSRA = ADCSRA | (1 << ADSC);

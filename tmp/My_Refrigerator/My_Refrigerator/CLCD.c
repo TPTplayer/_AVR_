@@ -51,7 +51,7 @@ void CLCD_putstr(char addr, char *str){
 	int char_count = 0;
 	
 	CLCD_Controller(addr | CLCD_DD_RAM_BASE);
-	while(*str != '\0'){
+	while(*str != 0){
 		if(((addr | CLCD_DD_RAM_BASE) + char_count) == 0x90){
 			CLCD_Controller(CLCD_DD_RAM_BASE | 0x40);
 		}
@@ -59,6 +59,9 @@ void CLCD_putstr(char addr, char *str){
 		
 		str += 1;
 		char_count += 1;
+		
+		//CLCD_Controller(CLEAR_DISPLAY);
+		//_delay_ms(500);
 	}
 }
 

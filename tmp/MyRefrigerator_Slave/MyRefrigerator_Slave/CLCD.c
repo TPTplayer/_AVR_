@@ -4,33 +4,33 @@
 #include "CLCD.h"
 
 /*
-A0: RS
-A1: RW
-A2: E
+E0: RS
+E1: RW
+E2: E
 */
 
 /*It is a function based on 8bit data bus.*/
 
 void CLCD_DataTransmitter(char data){
 	_delay_ms(1);
-	PORTA = RS; 
+	PORTE = RS; 
 	_delay_us(1); 
-	PORTA = (RS | E); 
+	PORTE = (RS | E); 
 	_delay_us(1);
-	PORTC = data; 
+	PORTB = data; 
 	_delay_us(1);
-	PORTA = RW;	
+	PORTE = RW;	
 }
 
 void CLCD_Controller(char ctl){
 	_delay_ms(30);
-	PORTA = 0x00; //RW clear
+	PORTE = 0x00; //RW clear
 	_delay_us(1);
-	PORTA = E;
+	PORTE = E;
 	_delay_us(1);
-	PORTC = ctl;
+	PORTB = ctl;
 	_delay_us(1);
-	PORTA = (RS | RW);
+	PORTE = (RS | RW);
 }
 
 void CLCD_initalizer(void){
