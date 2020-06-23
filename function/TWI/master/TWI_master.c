@@ -1,13 +1,12 @@
 ﻿#include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+#include <stdint.h>
 #include "TWI_master.h"
 
-void TWI_initializer(void){
-	cli();
+void TWI_master_initializer(void){
 	TWBR = 12;
 	TWSR = 0x00; 
-	sei();
 }
 
 void TWI_start(void){

@@ -6,19 +6,20 @@
 
 #include "TWI_slave.h"
 
-void TWI_initializer(void){
-	cli();
+volatile uint8_t received_data;
+
+void TWI_slave_initializer(void){
 	TWAR = (SLAVE_ADDR << 1) & 0xFE;
 	TWCR = (1 << TWIE) | (1 << TWEA) | (1 << TWINT) | (1 << TWEN);
-	sei();
 }
 
 ISR(TWI_vect){
-	if(TW_STATUS == TW_SR_DATA_ACK){
-		
-	}
-	else if(TW_STATUS == TW_BUS_ERROR){
-		TWCR = 0x00;
-		TWCR = (1 << TWIE) | (1 << TWEA) | (1 << TWINT) | (1 << TWEN);
+	uint8_t status = TWSR & (~((1 << TWPS1) | (1 << TWPS0)));
+	
+	TWCR |= (1 << TWINT) | (1 << TWEA);
+	TWCR &= ~(1 << TWSTO);
+	
+	if(status == 0x80){
+		received_data = TWDR;
 	}
 }
