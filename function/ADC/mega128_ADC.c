@@ -1,6 +1,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+#include <stdint.h>
 #include "mega128_ADC.h"
 
 void ADC_single_initalizer(int adc_num){
@@ -17,7 +18,7 @@ void ADC_single_initalizer(int adc_num){
 	_delay_ms(100);
 }
 
-float ADC_single_read(void){
+uint16_t ADC_single_read(void){
 	ADCSRA |= (1 << ADSC); 
 	while(ADCSRA & (1 << ADSC));
 	return ADC;
