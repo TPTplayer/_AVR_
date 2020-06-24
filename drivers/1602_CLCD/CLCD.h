@@ -1,5 +1,10 @@
-﻿#ifndef CLCD_H_
+﻿#include <stdint.h>
+
+#ifndef CLCD_H_
 #define CLCD_H_
+
+#define CTRL_PORT PORTE 
+#define DATA_PORT PORTA  
 
 #define RS 0x04
 #define RW 0x02
@@ -38,14 +43,24 @@ I/D = 1: cursor move right
 #define FUNC_FONT_SMALL 0b00100000
 #define FUNC_FONT_BIG 0b00100100
 
-void CLCD_DataTransmitter(char data);
-void CLCD_Controller(char ctl);
-void CLCD_initalizer(void);
-void CLCD_putstr(char addr, char *str);
-void CLCD_printstr(char addr, char *str, char size);
-void CLCD_move_cursor(char addr);
-void CLCD_move_cursor_s(char x, char y);
-void CLCD_input_font(char *font, int font_num, char cg_ram_addr);
-void CLCD_print_font(char addr, char font_addr);
-void CLCD_font_initailizer(void);
+void CLCD_DataTransmitter(uint8_t data);
+void CLCD_Controller(uint8_t ctl);
+void CLCD_initializer(void);
+void CLCD_putstr(uint8_t addr, char *str);
+void CLCD_printstr(uint8_t addr, char *str, uint8_t size);
+void CLCD_move_cursor(uint8_t addr);
+void CLCD_move_cursor_s(uint8_t x, uint8_t y);
+void CLCD_input_font(char *font, int font_num, uint8_t cg_ram_addr);
+void CLCD_print_font(uint8_t addr, uint8_t font_addr);
+
+void CLCD_DataTransmitter_4bit(uint8_t data);
+void CLCD_Controller_4bit(uint8_t ctl);
+void CLCD_initializer_4bit(void);
+void CLCD_putstr_4bit(uint8_t addr, char *str);
+void CLCD_printstr_4bit(uint8_t addr, char *str, uint8_t size);
+void CLCD_move_cursor_4bit(uint8_t addr);
+void CLCD_move_cursor_s_4bit(uint8_t x, uint8_t y);
+void CLCD_input_font_4bit(char *font, int font_num, uint8_t cg_ram_addr);
+void CLCD_print_font_4bit(uint8_t addr, uint8_t font_addr);
+
 #endif
