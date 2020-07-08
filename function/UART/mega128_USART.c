@@ -1,6 +1,7 @@
 ﻿#include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #include "mega128_USART.h"
 
@@ -77,3 +78,16 @@ void UART_flush(int uart_num){
 		break;	
 	}
 }
+
+int UART_transmit_stdout(char data, FILE *stream){
+	while(!(UCSR1A & (1 << UDRE1)));
+	UDR1 = data;
+	
+	return 0;
+}
+
+void setup_stdout(FILE *stream){
+	stream = fdevopen(UART_transmit_stdout, NULL);
+	return;
+}
+
