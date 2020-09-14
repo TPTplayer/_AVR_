@@ -50,4 +50,8 @@ void SPI_slave_init(void);
 uint8_t SPI_SS_check(void);
 uint32_t SPI_slave_transfer(uint8_t num_bit, uint32_t data);
 
+uint8_t SPI_master_isbusy(void);
+uint8_t SPI_slave_isbusy(void);
+uint8_t SPI_slave_xfer_isbroken(void);
+
 #endif /* GPIO_SPI_H_ */

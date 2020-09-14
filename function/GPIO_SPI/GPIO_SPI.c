@@ -3,8 +3,20 @@
 
 #include "GPIO_SPI.h"
 
-Master_flag master_flag;
-Slave_flag slave_flag;
+static Master_flag master_flag;
+static Slave_flag slave_flag;
+
+uint8_t SPI_master_isbusy(void){
+    return ~(master_flag.transfer_complete);
+}
+
+uint8_t SPI_slave_isbusy(void){
+    return ~(slave_flag.transfer_complete);
+}
+
+uint8_t SPI_slave_xfer_isbroken(void){
+    return slave_flag.transfer_broke;
+}
 
 void SPI_master_init(void){
     _DDR_SS |= _SS_PIN;
