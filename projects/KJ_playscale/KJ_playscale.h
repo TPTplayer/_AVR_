@@ -4,11 +4,6 @@
 #include <math.h>
 #include <stdint.h>
 
-#ifndef F_CPU
-#warning "<KJ_playscale>: F_CPU is not defined for calculate operation."
-#define F_CPU (uint32_t)16000000
-#endif
-
 //definition octaves
 #define OCT1    0
 #define OCT2    1
@@ -37,8 +32,16 @@
 //standard frequency: octave4 scale A (440Hz)
 #define A_OCT1_FREQ         55
 #define SCALE_PER_OCTAVE    12
+#define OCTAVE_NUM          8
 
+void init_KJ_playscale(void);
+int scale_to_intagerf(uint8_t scale);
+uint8_t intager_to_scalef(int scale_num);
+int octave_to_intagerf(uint8_t octave);
+uint8_t intager_to_octavef(int octave_num);
 float calc_scalefreq(int octave, int scale);
 float calc_clock(uint32_t clockspeed, float freq);
+void get_all_scalefreq(float *p);
+void get_all_required_clock(float *p, float *scalefreqs, uint32_t clockspeed);
 
 #endif /* KJ_PLAYSCALE_H_ */
