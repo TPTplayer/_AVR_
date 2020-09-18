@@ -35,6 +35,8 @@
 #define GET_SCALENUM(_SCALENAME_)   (_SCALENAME_ - BVAL_SCALE)
 #define GET_SCALENAME(_SCALENUM_)   (_SCALENUM_ + BVAL_SCALE)
 
+#define GET_ROUNDCLOCK(_CLOCK_)     (floor(_CLOCK_ + 0.5f))
+
 //octave1 scale A frequency
 //standard frequency: octave4 scale A (440Hz)
 #define A_OCT1_FREQ         55
