@@ -44,7 +44,7 @@
 #define OCTAVE_NUM          8
 
 typedef struct{
-    float clock[SCALE_PER_OCTAVE];
+    uint32_t clock[SCALE_PER_OCTAVE];
     uint32_t clockspeed;
 }octaveclock_t;
 
