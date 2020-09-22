@@ -38,9 +38,9 @@ note_t get_noteclockrange(uint32_t clockspeed, uint16_t mm){
 	
 	noteclock.mm = mm;
 	noteclock.clockspeed = clockspeed;
-	notetime = calc_noteclock(mm);
+	notetime = calc_notetimes(mm);
 	for(idx = 0; idx < NOTE_DIVISION; idx++){
-		noteclock.clock[idx] = calc_noteclock(notetime[idx]);
+		noteclock.clock[idx] = calc_noteclock(clockspeed, notetime[idx]);
 	}	
 	
 	return noteclock;
