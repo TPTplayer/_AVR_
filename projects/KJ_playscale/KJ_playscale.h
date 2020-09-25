@@ -1,81 +1,104 @@
 ﻿#ifndef KJ_PLAYSCALE_H_
 #define KJ_PLAYSCALE_H_
 
+#include <avr/io.h>
+#include <avr/interrupt.h>
 #include <math.h>
 #include <stdint.h>
+#include "KJ_playscale_scaledef.h"
+#include "KJ_playscale_calculation.h"
+
+//definition outputs
+#define DDR_CH1  DDRC
+#define DDR_CH2  DDRA  
+#define PORT_CH1 PORTC
+#define PORT_CH2 PORTA
+
+#define CH1_1st   (1 << 0)
+#define CH1_2nd   (1 << 1)
+#define CH1_3rd   (1 << 2)
+#define CH1_4th   (1 << 3)
+#define CH1_5th   (1 << 4)
+#define CH1_6th   (1 << 5)
+#define CH1_7th   (1 << 6)
+#define CH1_8th   (1 << 7)
+
+#define CH2_9th   (1 << 0)
+#define CH2_10th  (1 << 1)
+#define CH2_11th  (1 << 2)
+#define CH2_12th  (1 << 3)
+#define CH2_13th  (1 << 4)
+#define CH2_14th  (1 << 5)
+#define CH2_15th  (1 << 6)
+#define CH2_16th  (1 << 7)
 
 /*
-frequency default time unit:	microsecond
-quarter note default time unit: millisecond
+virtual clockspeed:
+Adjust GPIO to Overflow Interrupt to use multiple outputs.
 */
+#define VCLOCK_SCALE    F_CPU / 8
+#define VCLOCK_NOTE     F_CPU / 1024
 
-//definition octaves
-#define BVAL_OCT    0x02
-#define OCT1    0x00 + BVAL_OCT
-#define OCT2    0x01 + BVAL_OCT
-#define OCT3    0x02 + BVAL_OCT
-#define OCT4    0x03 + BVAL_OCT
-#define OCT5    0x04 + BVAL_OCT
-#define OCT6    0x05 + BVAL_OCT
-#define OCT7    0x06 + BVAL_OCT
-#define OCT8    0x07 + BVAL_OCT
+//setup macros
+#define SCALE_TIMER_INIT        TCCR1B |= (1 << CS10)
+#define SCALE_TIMSK_INIT        TIMSK |= (1 << TOIE1)   
+#define SCALE_COUNTER_SETCLOCK  TCNT1 = 0xFFFF - (8 / 1)    
 
-//definition scales
-#define BVAL_SCALE  0x0A
-#define C   0x00 + BVAL_SCALE
-#define CS  0x01 + BVAL_SCALE
-#define D   0x02 + BVAL_SCALE
-#define DS  0x03 + BVAL_SCALE
-#define E   0x04 + BVAL_SCALE
-#define F   0x05 + BVAL_SCALE
-#define FS  0x06 + BVAL_SCALE
-#define G   0x07 + BVAL_SCALE
-#define GS  0x08 + BVAL_SCALE
-#define A   0x09 + BVAL_SCALE
-#define AS  0x0A + BVAL_SCALE
-#define B   0x0B + BVAL_SCALE
+#define NOTE_TIMER_INIT         TCCR3B |= (1 << CS32) | (1 << CS30);
+#define NOTE_TIMSK_INIT         ETIMSK |= (1 << TOIE3);
+#define NOTE_COUNTER_SETCLOCK   TCNT3 = 0xFFFE   
 
-//definition notes
-#define NOTE1_IDX	0x00
-#define NOTE2_IDX	0x01
-#define NOTE4_IDX	0x02
-#define NOTE8_IDX	0x03
-#define NOTE16_IDX	0x04
-#define NOTE32_IDX	0x05
-#define NOTE64_IDX	0x06
-
-#define GET_OCTNUM(_OCTAVENAME_)    (_OCTAVENAME_ - BVAL_OCT)
-#define GET_OCTNAME(_OCTNUM_)       (_OCTNUM_ + BVAL_OCT)
-#define GET_SCALENUM(_SCALENAME_)   (_SCALENAME_ - BVAL_SCALE)
-#define GET_SCALENAME(_SCALENUM_)   (_SCALENUM_ + BVAL_SCALE)
-
-#define GET_ROUNDCLOCK(_CLOCK_)     (floor(_CLOCK_ + 0.5f))
-
-//octave1 scale A frequency
-//standard frequency: octave4 scale A (440Hz)
-#define A_OCT1_FREQ         55
-#define SCALE_PER_OCTAVE    12
-#define OCTAVE_NUM          8
-
-#define NOTE_DIVISION		7
+typedef struct {
+    uint32_t scaleclock;
+    uint32_t noteclock;
+}sound_t;
 
 typedef struct{
-    uint32_t clock[SCALE_PER_OCTAVE];
-    uint32_t clockspeed;
-}octaveclock_t;
+    uint8_t track_num;
+    uint16_t avail_track;
+    uint32_t track_length[16];
+    uint32_t length;
+    
+    uint8_t *track0;
+    uint8_t *notetrack0;
+    uint8_t *track1;
+    uint8_t *notetrack1;
+    uint8_t *track2;
+    uint8_t *notetrack2;
+    uint8_t *track3;
+    uint8_t *notetrack3;
+    uint8_t *track4;
+    uint8_t *notetrack4;
+    uint8_t *track5;
+    uint8_t *notetrack5;
+    uint8_t *track6;
+    uint8_t *notetrack6;
+    uint8_t *track7;
+    uint8_t *notetrack7;
+    uint8_t *track8;
+    uint8_t *notetrack8;
+    uint8_t *track9;
+    uint8_t *notetrack9;
+    uint8_t *track10;
+    uint8_t *notetrack10;
+    uint8_t *track11;
+    uint8_t *notetrack11;
+    uint8_t *track12;
+    uint8_t *notetrack12;
+    uint8_t *track13;
+    uint8_t *notetrack13;
+    uint8_t *track14;
+    uint8_t *notetrack14;
+    uint8_t *track15;
+    uint8_t *notetrack15;
+}track_t;
 
-typedef struct{
-	uint16_t mm;
-	uint32_t clock[NOTE_DIVISION];
-	uint32_t clockspeed;
-}note_t;
+ISR(TIMER1_OVF_vect);
+ISR(TIMER3_OVF_vect);
 
-octaveclock_t get_clockrange(uint32_t clockspeed, uint8_t octavename);
-float calc_scalefreq(int octavename, int scalename);
-float calc_clock(uint32_t clockspeed, float freq);
-
-note_t get_noteclockrange(uint32_t clockspeed, uint16_t mm);
-float * calc_notetimes(uint16_t mm);
-float calc_noteclock(uint32_t clockspeed, float notetime);
+void output_enable(void);
+void output_disable(void);
+void playscale_init(uint32_t vclockspeed_scale, uint32_t vclockspeed_note, uint32_t note_mm);
+void playscale_play(track_t tracks);
 
 #endif /* KJ_PLAYSCALE_H_ */
