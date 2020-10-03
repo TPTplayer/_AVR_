@@ -1,5 +1,13 @@
-﻿#ifndef KJ_PLAYSCALE_SCALEDEF_H_
-#define KJ_PLAYSCALE_SCALEDEF_H_
+﻿#ifndef KJ_PLAYSCALE_DEF_H_
+#define KJ_PLAYSCALE_DEF_H_
+
+//octave1 scale A frequency
+//standard frequency: octave4 scale A (440Hz)
+#define A_OCT1_FREQ         55
+#define SCALE_PER_OCTAVE    12
+#define OCTAVE_NUM          8
+
+#define BEAT_DIVISION		7
 
 //definition octaves
 #define OCT1    0x00
@@ -24,7 +32,16 @@
 #define A   0x09
 #define AS  0x0A
 #define B   0x0B
-#define REST   0x0C
+#define REST 0x0C
+
+//definition BEATs
+#define BEAT1	0x00
+#define BEAT2	0x01
+#define BEAT4	0x02
+#define BEAT8	0x03
+#define BEAT16	0x04
+#define BEAT32	0x05
+#define BEAT64	0x06
 
 /*octave1*/
 #define C1  (OCT1 << 4) | C
@@ -138,4 +155,4 @@
 #define AS8 (OCT8 << 4) | AS
 #define B8  (OCT8 << 4) | B
 
-#endif /* KJ_PLAYSCALE_SCALEDEF_H_ */
+#endif /* KJ_PLAYSCALE_DEF_H_ */
