@@ -1,9 +1,8 @@
-﻿#ifndef SD_H_
-#define SD_H_
+﻿#ifndef SD_MACRODEF_H_
+#define SD_MACRODEF_H_
 
 #include <avr/io.h>
 #include "GPIO_SPI.h"
-#include "_sd_cmd_arguments.h"
 
 #define _DDR_SD_SS      _DDR_SS
 #define _DDR_SD_SCK     _DDR_SCK
@@ -39,7 +38,7 @@
 #define _CMD24  24
 #define _CMD25  25
 #define _CMD27  27
-#define _CMD28  28 
+#define _CMD28  28
 #define _CMD29  29
 #define _CMD30  30
 #define _CMD32  32
@@ -61,8 +60,11 @@
 #define _CMD_BYTE_LEN   6
 #define _CMD_BIT_LEN    _CMD_BYTE_LEN * 8
 
+#define _BLOCK_BYTE_LEN	512
+#define _BLOCK_BIT_LEN	_BLOCK_BYTE_LEN * 8
+
 #define _CMD_HEADER(x)  (0x40 | (x & 0x3F))
-#define _CMD_CRC7(x)    ((x << 1) | 0x01)    
+#define _CMD_CRC7(x)    ((x << 1) | 0x01)
 #define _CMD_PACKET(_HEADER_, _ARGUMENT_, _CRC_) (uint64_t)(((uint64_t)_HEADER_ << 40) | ((uint64_t)_ARGUMENT_ << 8) | _CRC_)
 
 #define _OCR_BIT_LEN    32
@@ -121,4 +123,7 @@
 
 #define _MASK(_DATA_, _BITNUM_)    (uint8_t)((_DATA_ & (1 << _BITNUM_)) >> _BITNUM_)
 
-#endif /* SD_H_ */
+#define _CMD8_ARGUMENT(_VHS_, _CHECK_PATTERN_)  (uint32_t)(((uint16_t)_VHS_ << 8) | _CHECK_PATTERN_)
+#define _ACMD41_ARGUMENT(_HCS_)                 (uint32_t)((uint32_t)_HCS_ << 30)
+
+#endif /* SD_MACRODEF_H_ */

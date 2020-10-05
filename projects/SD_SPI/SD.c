@@ -1,16 +1,24 @@
 ﻿#include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdint.h>
-#include "SD.h"
+#include <inttypes.h>
 
-#define LOOP    10
+#include "sd_funcdef.h"
+#include "sd_macrodef.h"
 
 uint8_t response1 = 0x00;
 uint16_t response2 = 0x00;
 uint64_t response3 = 0x00, response7 = 0x00;
 
+#define DEBUG_ENABLE
+
+#ifdef DEBUG_ENABLE
+#include <stdio.h>
+#include <inttypes.h>
+#endif
+
 int sdcard_init(void){
-    uint8_t check_pattern = 0xCC, vhs = 0x01, hcs = 0x00;
+    uint8_t check_pattern = 0xCC, vhs = 0x01;
     uint32_t ocr_register = 0x00;
     
     uint64_t resp = 0x00;
@@ -20,57 +28,90 @@ int sdcard_init(void){
     __sd_cmd_transmit(_CMD0, 0x00);
     
     __sd_cmd_transmit(_CMD8, _CMD8_ARGUMENT(vhs, check_pattern));
-    resp = __sd_response_receive(_RESP7);
-    response7 = resp;
-    
-    //show response7
-    
+    response7 = __sd_response_receive(_RESP7);
+
+    #ifdef DEBUG_ENABLE
+	/*show response7*/
+    printf("resp7: 0x%llx\n", response7);
+	#endif
+	
     if((_R7_MASK_R1(resp) != 0x01) || (_R7_MASK_VCA(resp) != vhs) || (_R7_MASK_CHECKPATTERN(resp) != check_pattern)){
         return -1;
     }        
     
     __sd_cmd_transmit(_CMD58, 0x00);
-    resp = __sd_response_receive(_RESP3);
-    ocr_register = _R3_MASK_OCR(resp);
-    response3 = resp;
+    response3 = __sd_response_receive(_RESP3);
+    ocr_register = _R3_MASK_OCR(response3);
     
-    //show response3 and check ocr register
-    
+	#ifdef DEBUG_ENABLE
+    /*show response3 and check ocr register*/
+    printf("resp3->resp1: 0x%"PRIx8"\n", _R3_MASK_R1(response3));
+	printf("resp3->ocr register: 0x%"PRIx32"\n", _R3_MASK_OCR(response3));
+	#endif
+	
     if(_R3_MASK_R1(resp) != 0x01){
         return -1;
     }
     
     __sd_cmd_transmit(_CMD55, 0x00);
-    resp = __sd_response_receive(_RESP1);
-    response1 = resp;
+    response1 = __sd_response_receive(_RESP1);
     
-    //show response1
+	#ifdef DEBUG_ENABLE
+    /*show response1*/
+	printf("resp1: 0x%"PRIx8"\n", response1);
+	#endif
     
-    if(resp != 0x01){
+    if(response1 != 0x01){
         return -1;
     }
     
     do{
         __sd_cmd_transmit(_ACMD41, _ACMD41_ARGUMENT(1));
-        resp = __sd_response_receive(_RESP1);
-        response1 = resp;
+        response1 = __sd_response_receive(_RESP1);
         
-        //show response1
-    }while(resp != 0x00);  
+		#ifdef DEBUG_ENABLE
+        /*show response1*/
+		printf("resp1: 0x%"PRIx8"\n", response1);
+		#endif
+    }while(response1 != 0x00);  
     
      __sd_cmd_transmit(_CMD58, 0x00);
-     resp = __sd_response_receive(_RESP3);
-     ocr_register = _R3_MASK_OCR(resp);
-     response3 = resp;
+     response3 = __sd_response_receive(_RESP3);
+     ocr_register = _R3_MASK_OCR(response3);
 	 
-	 if((ocr_register & (1 << _OCR_CCS)) == (1 << _OCR_CCS)){
-		 //SDHC or SDXC Memory Card
+	 #ifdef DEBUG_ENABLE
+	 /*show response3*/
+	 printf("resp3: 0x%llx\n", response3);
+	 #endif
+	 
+	 if((ocr_register & ((uint32_t)1 << _OCR_CCS)) != ((uint32_t)1 << _OCR_CCS)){
+		 /*SDSC Memory Card (unusable)*/
+		 return -1;
 	 }  
-	 else{
-		 //SDSC Memory Card
-	 }
-	 
 	 return 0;
+}
+
+int sdcard_read(uint32_t address, uint8_t *buf){
+	int idx = 0;
+	__sd_cmd_transmit(_CMD17, address);
+	response1 = __sd_response_receive(_RESP1);
+	
+	#ifdef DEBUG_ENABLE
+	/*show response1*/
+	printf("resp1: 0x%"PRIx8"\n", response1);
+	#endif
+	
+	if(response1 != 0x00){
+		return -1;
+	}
+	
+	SPI_SS_enable();
+	for(idx = 0; idx < _BLOCK_BYTE_LEN; idx++){
+		buf[idx] = SPI_master_transfer(8, 0x00);
+	}
+	SPI_SS_disable();
+	
+	return 0;
 }
 
 void __sd_cmd_transmit(uint8_t cmd_index, uint32_t argument){
@@ -114,7 +155,7 @@ uint64_t __sd_response_receive(int response){
 }
 
 uint8_t __sd_crc7_generator(uint8_t header, uint32_t argument){
-    uint64_t body = ((0x40 | ((uint64_t)index & 0x3F)) << 32) | argument;
+    uint64_t body = ((0x40 | ((uint64_t)header & 0x3F)) << 32) | argument;
     uint64_t mask = 0xFF00000000;
     uint8_t crc = 0x00, data = 0x00;
     int cnt = 0, i = 0, bytes = 5;
