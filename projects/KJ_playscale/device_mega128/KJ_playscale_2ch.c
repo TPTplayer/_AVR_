@@ -7,7 +7,7 @@ void init_channel01(void){
 	_CH01_BEATINT_DISABLE;
 	_CH01_OUTPUT_DISABLE;
 	
-	TCCR0 |= (1 << CS02) | (1 << CS01) | (1 << CS00);
+	TCCR0 |= (1 << CS02);
 	TCCR1A |= (1 << COM1A0);
 	TCCR1B |= (1 << WGM13) | (1 << WGM12) | (1 << CS10);
 	
@@ -21,7 +21,7 @@ void init_channel02(void){
 	_CH02_BEATINT_DISABLE;
 	_CH02_OUTPUT_DISABLE;
 	
-	TCCR2 |= (1 << CS22) | (1 << CS20);
+	TCCR2 |= (1 << CS21) | (1 << CS20);
 	TCCR3A |= (1 << COM1A0);
 	TCCR3B |= (1 << WGM33) | (1 << WGM32) | (1 << CS30);
 	
@@ -31,7 +31,7 @@ void init_channel02(void){
 	return;
 }
 
-void set_channel01(uint16_t bpm, uint32_t len, uint32_t *scaledata, uint32_t *beatdata){
+void set_channel01(uint16_t bpm, uint32_t len, uint8_t *scaledata, uint8_t *beatdata){
 	uint8_t octave = 0x00, scale = 0x00;
 	uint32_t idx = 0x00;
 	
@@ -46,12 +46,12 @@ void set_channel01(uint16_t bpm, uint32_t len, uint32_t *scaledata, uint32_t *be
 		scale = scaledata[idx] & 0x0F;
 		
 		ch_header.channel_01.scaleclock[idx] = calc_clock(_SCALECLOCKSPEED, calc_scalefreq(octave, scale));
-		ch_header.channel_01.beatclock[idx] = calc_beatclock(_BEATCLOCKSPEED, calc_beattime(beatdata[idx], bpm));	
+		ch_header.channel_01.beatclock[idx] = calc_beatclock(_BEATCLOCKSPEED, calc_beattime(beatdata[idx], bpm));
 	}
 	return;
 }
 
-void set_channel02(uint16_t bpm, uint32_t len, uint32_t *scaledata, uint32_t *beatdata){
+void set_channel02(uint16_t bpm, uint32_t len, uint8_t *scaledata, uint8_t *beatdata){
 	uint8_t octave = 0x00, scale = 0x00;
 	uint32_t idx = 0x00;
 	
@@ -68,6 +68,7 @@ void set_channel02(uint16_t bpm, uint32_t len, uint32_t *scaledata, uint32_t *be
 		ch_header.channel_02.scaleclock[idx] = calc_clock(_SCALECLOCKSPEED, calc_scalefreq(octave, scale));
 		ch_header.channel_02.beatclock[idx] = calc_beatclock(_BEATCLOCKSPEED, calc_beattime(beatdata[idx], bpm));
 	}
+	
 	return;
 }
 
