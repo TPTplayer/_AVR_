@@ -177,6 +177,5 @@ void __sd_initclock(void){
     SPI_master_transfer(32, 0x00);
     SPI_master_transfer(32, 0x00);
     SPI_master_transfer(10, 0x00);
-    
     return;
 }
