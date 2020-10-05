@@ -58,7 +58,19 @@ int sdcard_init(void){
         //show response1
     }while(resp != 0x00);  
     
-      
+     __sd_cmd_transmit(_CMD58, 0x00);
+     resp = __sd_response_receive(_RESP3);
+     ocr_register = _R3_MASK_OCR(resp);
+     response3 = resp;
+	 
+	 if((ocr_register & (1 << _OCR_CCS)) == (1 << _OCR_CCS)){
+		 //SDHC or SDXC Memory Card
+	 }  
+	 else{
+		 //SDSC Memory Card
+	 }
+	 
+	 return 0;
 }
 
 void __sd_cmd_transmit(uint8_t cmd_index, uint32_t argument){
