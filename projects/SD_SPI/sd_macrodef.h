@@ -126,7 +126,7 @@
 #define _CMD8_ARGUMENT(_VHS_, _CHECK_PATTERN_)  (uint32_t)(((uint16_t)_VHS_ << 8) | _CHECK_PATTERN_)
 #define _ACMD41_ARGUMENT(_HCS_)                 (uint32_t)((uint32_t)_HCS_ << 30)
 
-#define _ATTEMPT_LIMIT	20
+#define _ATTEMPT_LIMIT	120
 #define _SD_ERROR	-1
 #define _SD_SUCCESS	0
 

@@ -81,7 +81,30 @@ int sdcard_init(void){
 }
 
 int sdcard_read(uint32_t address, uint8_t *buf){
+	int attempts = 0, idx = 0;
+	uint8_t expected_start_token = 0xFE, received_start_token = 0x00;
+	uint16_t crc_16;
 	
+	__sd_cmd_transmit(17, address);
+	response1 = __sd_response_receive(_RESP1);
+	if(response1 == 0xFF) return _SD_ERROR;
+	#ifdef DEBUG_ENABLE
+	/*show response1*/
+	printf("resp1: 0x%"PRIx8"\n", response1);
+	#endif
+	
+	while((received_start_token = SPI_master_transfer(8, 0xFF)) == expected_start_token){
+		if(attempts == _ATTEMPT_LIMIT){
+			return _SD_ERROR;
+		}
+		attempts += 1;
+	}
+	
+	for(idx = 0; idx < _BLOCK_BYTE_LEN; idx++){
+		buf[idx] = SPI_master_transfer(8, 0xFF);
+	}
+	crc_16 = SPI_master_transfer(16, 0xFF);
+	return _SD_SUCCESS;
 }
 
 void __sd_cmd_transmit(uint8_t cmd_index, uint32_t argument){
