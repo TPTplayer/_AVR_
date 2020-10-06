@@ -63,8 +63,8 @@
 #define _BLOCK_BYTE_LEN	512
 #define _BLOCK_BIT_LEN	_BLOCK_BYTE_LEN * 8
 
-#define _CMD_HEADER(x)  (0x40 | (x & 0x3F))
-#define _CMD_CRC7(x)    ((x << 1) | 0x01)
+#define _CMD_HEADER(_INDEX_)  (0x40 | (_INDEX_ & 0x3F))
+#define _CMD_CRC7(_CRC7_)    ((_CRC7_ << 1) | 0x01)
 #define _CMD_PACKET(_HEADER_, _ARGUMENT_, _CRC_) (uint64_t)(((uint64_t)_HEADER_ << 40) | ((uint64_t)_ARGUMENT_ << 8) | _CRC_)
 
 #define _OCR_BIT_LEN    32
@@ -121,7 +121,7 @@
 #define _R7_MASK_VCA(_RESP7_)           (uint8_t)((_RESP7_ & ((uint16_t)0x0F << 8)) >> 8)
 #define _R7_MASK_CHECKPATTERN(_RESP7_)  (uint8_t)(_RESP7_ & 0xFF)
 
-#define _MASK(_DATA_, _BITNUM_)    (uint8_t)((_DATA_ & (1 << _BITNUM_)) >> _BITNUM_)
+#define _MASK(_DATA_, _BITNUM_)    (uint8_t)((_DATA_ & ((uint32_t)1 << _BITNUM_)) >> _BITNUM_)
 
 #define _CMD8_ARGUMENT(_VHS_, _CHECK_PATTERN_)  (uint32_t)(((uint16_t)_VHS_ << 8) | _CHECK_PATTERN_)
 #define _ACMD41_ARGUMENT(_HCS_)                 (uint32_t)((uint32_t)_HCS_ << 30)

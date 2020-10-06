@@ -1,6 +1,10 @@
 ﻿#ifndef SD_FUNCDEF_H_
 #define SD_FUNCDEF_H_
 
+#ifndef F_CPU
+#define F_CPU 16000000
+#endif
+
 #include <avr/io.h>
 #include <util/delay.h>
 #include <stdint.h>

@@ -1,8 +1,4 @@
-﻿#ifndef F_CPU
-#define F_CPU 16000000
-#endif
-
-#include "sd_funcdef.h"
+﻿#include "sd_funcdef.h"
 #include "sd_macrodef.h"
 #include "debug.h"
 
@@ -50,7 +46,7 @@ int sdcard_init(void){
 	ocr_register = _R3_MASK_OCR(response3);
 	
 	/*SDSC Memory Card (unusable)*/
-	if((ocr_register & ((uint32_t)1 << _OCR_CCS)) != ((uint32_t)1 << _OCR_CCS)) return _SD_ERROR;
+	if((_MASK(ocr_register, _OCR_CCS)) != _SD_SET) return _SD_ERROR;
 	return _SD_SUCCESS;
 }
 
@@ -98,16 +94,16 @@ uint64_t __sd_response_receive(int response){
 	SPI_SS_enable();
 	switch(response){
 	case _RESP1:
-		receive = SPI_master_transfer(_RESP1_BIT_LEN, 0x00);
+		receive = SPI_master_transfer(_RESP1_BIT_LEN, 0xFF);
 		break;    
 	case _RESP2:
-		receive = SPI_master_transfer(_RESP2_BIT_LEN, 0x00);
+		receive = SPI_master_transfer(_RESP2_BIT_LEN, 0xFF);
 		break;
 	case _RESP3:
-		receive = SPI_master_transfer(_RESP3_BIT_LEN, 0x00);
+		receive = SPI_master_transfer(_RESP3_BIT_LEN, 0xFF);
 		break;
 	case _RESP7:
-		receive = SPI_master_transfer(_RESP7_BIT_LEN, 0x00);
+		receive = SPI_master_transfer(_RESP7_BIT_LEN, 0xFF);
 		break;
 	default:
 		break;    
