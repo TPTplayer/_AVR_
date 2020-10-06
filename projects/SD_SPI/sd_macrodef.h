@@ -127,7 +127,10 @@
 #define _ACMD41_ARGUMENT(_HCS_)                 (uint32_t)((uint32_t)_HCS_ << 30)
 
 #define _ATTEMPT_LIMIT	120
+
 #define _SD_ERROR	-1
 #define _SD_SUCCESS	0
+#define _SD_SET		1
+#define _SD_CLEAR	0
 
 #endif /* SD_MACRODEF_H_ */
