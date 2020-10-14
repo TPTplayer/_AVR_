@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 
-#define SET		(uint8_t)1
+#define SET	(uint8_t)1
 #define CLEAR	(uint8_t)0
 
 int main(int argc, char **argv) {
